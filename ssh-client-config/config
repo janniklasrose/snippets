@@ -1,0 +1,50 @@
+# ~/.ssh/config
+
+#====================================================
+# GENERAL SETTINGS
+
+ExitOnForwardFailure yes
+    # -> Ensure proper termination if forwarded connection drops
+
+#====================================================
+# GATEWAY SETTINGS
+# -> Use this when you need to connect through a SSH gateway server
+
+CanonicalizeHostname yes
+    # -> Tell ssh to re-parse this file with expanded hostnames
+
+# Define global company username and gateway (if needed)
+Host company-gateway
+    HostName sshgw.company.org
+    ProxyCommand none
+        # -> Explicitly prevent use of proxy for this gateway:
+Host *.company.org
+    User user123
+    ProxyCommand bash -c '(timeout 1.0 nc -z %h %p) && nc %h %p || ssh -W %h:%p company-gateway'
+        # -> See https://serverfault.com/a/891926 for the rationale on the above auto-detection
+
+#====================================================
+# HOST SETTINGS
+# -> Use these to change specific settings for certain hosts
+
+Host raspberry
+    # Private server
+    User pi
+    Port 2222
+    HostName myhostname.ddns.org
+
+# Friendly hostnames (can be used on command line, including tab completion)
+Host my-pc
+    HostName pc-user123-01.department.company.org
+Host group-server
+    HostName %h.department.company.org
+    ForwardAgent yes
+        # -> Enable agent forwarding only for trusted servers (or via `ssh -A`)
+        # -> Use when you don't want to keep a separate ssh key on that server
+Host rendering-server
+    HostName %h.department.company.org
+    ForwardX11 yes
+        # -> Enable X11 forwarding only for trusted servers and when needed (or via `ssh [-X|-Y]`)
+        # -> Use for convenience for certain servers that are often used for graphical programs
+
+#====================================================

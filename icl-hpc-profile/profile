@@ -1,0 +1,20 @@
+# prevent ~/perl5 directory
+test -f ${HOME}/.perl-homedir || echo PERL_HOMEDIR=0 > ${HOME}/.perl-homedir
+test -d ${HOME}/perl5 && rmdir ${HOME}/perl5
+
+# prevent ~/intel/ism/rm directory
+export INTEL_DISABLE_ISIP=1
+
+# add personal bin directories to PATH
+test -d ${HOME}/bin && PATH=${HOME}/bin:${PATH}
+test -d ${HOME}/.local/bin && PATH=${HOME}/.local/bin:${PATH}
+
+# add personal modulefiles to module
+test -d ${HOME}/modulefiles && module use ${HOME}/modulefiles
+test -d ${HOME}/.local/modulefiles && module use ${HOME}/.local/modulefiles
+
+# default permissions for files/folders
+umask 0077
+
+# nice directory colours (this works on black)
+LS_COLORS=${LS_COLORS}:'di=01;34:'
